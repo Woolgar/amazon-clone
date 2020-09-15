@@ -5,17 +5,30 @@ import Header from './Header.js';
 import Home from "./Home";
 import Checkout from "./Checkout";
 import Login from "./Login";
+import Payment from "./Payment";
 import { auth} from "./firebase";
+import { useStateValue} from "./Stateprovider";
 
 function App() {
+  const [{}, dispatch] = useStateValue();
 
   useEffect(() => {
+
+
     // Will only run one when app component loads
     auth.onAuthStateChanged(authUser => {
-      console.log('the user is ', authUser);
-
       if (authUser) {
-        
+        // User is logged in
+        dispatch({
+          type: 'SET_USER',
+          user: authUser
+        })
+      } else {
+        // User is logged out
+        dispatch({
+          type: 'SET_USER',
+          user: null
+        })
       }
     })
   }, [])
@@ -31,6 +44,11 @@ function App() {
       <Route path="/checkout">
         <Header/>
           <Checkout />
+         </Route>
+         <Route path="/payment">
+         <Header/>
+          <h2>payment</h2>
+          <Payment/>
          </Route>
          <Route path="/">
          <Header/>
