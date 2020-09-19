@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const instance = axios.create({
-    baseURL:'...' // API (Cloud function) URL
+    baseURL:'http://localhost:5001/fir-32983/us-central1/api' // API (Cloud function) URL
 });
 
 

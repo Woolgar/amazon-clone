@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react'
 import './Payment.css';
 import { useStateValue} from "./Stateprovider";
 import CheckoutProduct from './CheckoutProduct';
-import { Link} from "react-router-dom";
+import { Link, useHistory} from "react-router-dom";
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import CurrencyFormat from 'react-currency-format';
 import { getBasketTotal } from './reducer';
@@ -10,8 +10,12 @@ import axios from "axios";
 
 function Payment() {
     const [{basket, user }, dispatch] = useStateValue();
+    const history = useHistory();
+
+
     const stripe = useStripe();
     const elements =useElements();
+
     const [succeeded, setSucceeded] = useState(false);
     const [processing, setProcessing] = useState("");
 
@@ -24,12 +28,17 @@ function Payment() {
         const getClientSecret = async () => {
             const response = await axios({
                 method: 'post',
-                url: `/payments/create?total=${getBasketTotal(basket)}`
-            })
+                // Stripe expect the total in a currencies subunits 
+                url: `/payments/create?total=${getBasketTotal(basket) * 100}`
+            });
+            setClientSecret(response.data.clientSecret)
         }
 
         getClientSecret();
     }, [basket])
+
+
+    console.log('the secret is', clientSecret)
 
     const handleSubmit = async (event) => {
         // Stripe handling
@@ -37,7 +46,19 @@ function Payment() {
         // Prevents buying multiple times
         setProcessing(true);
 
-        //const payload = await stripe
+        const payload = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: elements.getElement(CardElement)
+            }
+        }).then(({ paymentIntent}) => {
+            // paymentIntent = payment confirmation
+            setSucceeded(true);
+            setError(null);
+            setProcessing(false)
+
+            history.replace('/orders')
+
+        })
 
     }
     const handleChange = event => {
