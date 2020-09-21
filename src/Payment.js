@@ -6,7 +6,8 @@ import { Link, useHistory} from "react-router-dom";
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import CurrencyFormat from 'react-currency-format';
 import { getBasketTotal } from './reducer';
-import axios from "axios";
+import axios from "./axios";
+import { db } from './firebase';
 
 function Payment() {
     const [{basket, user }, dispatch] = useStateValue();
@@ -22,7 +23,6 @@ function Payment() {
     const[error, setError] = useState(null);
     const[disabled, setDisabled] = useState(true);
     const [clientSecret, setClientSecret] = useState(true);
-
     useEffect(() => {
         // Generate stripe secret to allow customer being charged
         const getClientSecret = async () => {
@@ -52,9 +52,21 @@ function Payment() {
             }
         }).then(({ paymentIntent}) => {
             // paymentIntent = payment confirmation
+
+            db.collection('users').doc(user?.uid).collection('orders').doc(paymentIntent.id).set({
+                basket: basket,
+                amount: paymentIntent.amount,
+                created: paymentIntent.created,
+            })
+
             setSucceeded(true);
-            setError(null);
+            setError(null)
             setProcessing(false)
+
+
+            dispatch({
+                type: 'EMPTY_BASKET'
+            })
 
             history.replace('/orders')
 
@@ -128,7 +140,7 @@ function Payment() {
                                 value={getBasketTotal(basket)}
                                 displayType={"text"}
                                 thousandSeperator={true}
-                                prefix={"£"}
+                                prefix={"usd"}
                                 />
                                 <button disabled={processing || disabled || succeeded}>
                                 <span>{processing ? <p> Processing</p> : "Buy Now"}</span>
