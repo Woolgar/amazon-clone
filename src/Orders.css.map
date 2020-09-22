@@ -1,6 +1,6 @@
 {
     "version": 3,
-    "mappings": "",
+    "mappings": "AAAA,AAAA,OAAO,CAAA;EACH,OAAO,EAAC,SAAS;CAIpB;;AALD,AAEI,OAFG,CAED,EAAE,CAAA;EACA,MAAM,EAAC,MAAM;CAChB",
     "sources": [
         "Orders.scss"
     ],

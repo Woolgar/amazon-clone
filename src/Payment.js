@@ -140,7 +140,7 @@ function Payment() {
                                 value={getBasketTotal(basket)}
                                 displayType={"text"}
                                 thousandSeperator={true}
-                                prefix={"usd"}
+                                prefix={"$"}
                                 />
                                 <button disabled={processing || disabled || succeeded}>
                                 <span>{processing ? <p> Processing</p> : "Buy Now"}</span>

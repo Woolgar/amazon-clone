@@ -93,5 +93,7 @@
 .header__basketCount {
   margin-left: 10px;
   margin-right: 10px;
+  color: #f08804;
+  text-decoration: none;
 }
 /*# sourceMappingURL=Header.css.map */
