@@ -15,7 +15,7 @@ function Header() {
         }
     }
     return (
-        <div className='header'>
+        <div className='header' id="header">
             <Link to="/">
             <img className="header__logo" alt="logo"src='https://pngimg.com/uploads/amazon/amazon_PNG11.png'/>
             </Link>
